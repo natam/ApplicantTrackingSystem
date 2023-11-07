@@ -15,6 +15,8 @@ public class JobPosition {
     private String industry;
     private String role;
 
+    private List<Applicant> relevantApplicants;
+
     public JobPosition(String title, double offeredSalaryRangeStart, double offeredSalaryRangeEnd, String location, String industry, String role) {
         this.title = title;
         this.offeredSalaryRangeStart = offeredSalaryRangeStart;
@@ -23,6 +25,7 @@ public class JobPosition {
         this.industry = industry;
         this.role = role;
         requiredSkills = new ArrayList<>();
+        relevantApplicants = new ArrayList<>();
     }
 
     public String getIndustry() {
@@ -73,6 +76,10 @@ public class JobPosition {
         this.offeredSalaryRangeEnd = offeredSalaryRangeEnd;
     }
 
+    public List<Applicant> getRelevantApplicants() {
+        return relevantApplicants;
+    }
+
     public List<String> getRequiredSkills() {
         return requiredSkills;
     }
@@ -90,9 +97,23 @@ public class JobPosition {
     }
 
     public void addRequiredSkill(String skill){
-        if(!requiredSkills.contains(skill)){
+        if(!requiredSkills.contains(skill) && !skill.isEmpty()){
             requiredSkills.add(skill);
         }else System.out.println("Skill already presents");
+    }
+
+    public void addRelevantApplicant(Applicant applicant){
+        if(applicant!=null){
+            if(!relevantApplicants.contains(applicant)){
+                if (isWithinBudget(applicant) && getLocation().equals(applicant.getPreferredLocation())) {
+                    relevantApplicants.add(applicant);
+                }
+            }else {
+                System.out.println("Job position already contains this applicant");
+            }
+        }else {
+            System.out.println("Invalid applicant");
+        }
     }
 
     public boolean isWithinBudget(Applicant applicant){

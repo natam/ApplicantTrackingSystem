@@ -2,6 +2,7 @@ package org.system;
 
 import org.applicants.Applicant;
 import org.job_positions.JobPosition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.recruiters.Recruiter;
 
@@ -13,11 +14,18 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HRSystemTest {
-    HRSystem hrSystem = new HRSystem();
-    JobPosition jobPosition = new JobPosition("QA Automation Engineer", 55000.0, 65000.0, "Berlin", "Tech", "role1");
-    Recruiter recruiter = new Recruiter("Tom");
-    Applicant applicant = new Applicant("Natallia", "Berlin", "Berlin", 65000.0, "Open");
+    HRSystem hrSystem;
+    Recruiter recruiter;
+    JobPosition jobPosition;
+    Applicant applicant;
 
+    @BeforeEach
+    void init() {
+        hrSystem = new HRSystem();
+        jobPosition = new JobPosition("QA Automation Engineer", 55000.0, 65000.0, "Berlin", "Tech", "role1");
+        applicant = new Applicant("Natallia", "Berlin", "Berlin", 65000.0, "Open");
+        recruiter = new Recruiter("Tom");
+    }
     @Test
     void givenNullJobPosition_addJobPosition() {
         hrSystem.addJobPosition(null);
@@ -94,6 +102,8 @@ class HRSystemTest {
         JobPosition jobPosition2 = new JobPosition("CTO", 120000.0, 180000.0, "Berlin", "Tech", "role2");
         Recruiter recruiter2 = new Recruiter("Nina");
         Applicant applicant2 = new Applicant("Jon", "Berlin", "Berlin", 165000.0, "Reviewed");
+        jobPosition.addRelevantApplicant(applicant);
+        jobPosition2.addRelevantApplicant(applicant2);
 
         hrSystem.addApplicant(applicant);
         hrSystem.addApplicant(applicant2);

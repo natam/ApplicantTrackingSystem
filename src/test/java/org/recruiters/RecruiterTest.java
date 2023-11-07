@@ -1,13 +1,22 @@
 package org.recruiters;
 
+import org.applicants.Applicant;
 import org.job_positions.JobPosition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RecruiterTest {
-    JobPosition jobPosition = new JobPosition("QA Automation Engineer", 55000.0, 65000.0, "Berlin", "Tech", "role1");
-    Recruiter recruiter = new Recruiter("Tom");
+    JobPosition jobPosition;
+    Recruiter recruiter;
+
+    @BeforeEach
+    void init() {
+        jobPosition = new JobPosition("QA Automation Engineer", 55000.0, 65000.0, "Berlin", "Tech", "role1");
+        recruiter = new Recruiter("Tom");
+    }
+
     @Test
     void givenNullJobPosition_assignJobPosition() {
         int managedPositionBeforeAction = recruiter.getJobPositionsManaged().size();
