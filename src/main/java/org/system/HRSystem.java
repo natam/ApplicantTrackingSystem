@@ -46,6 +46,14 @@ public class HRSystem {
         }
     }
 
+    public void deleteApplicant(Applicant applicant){
+        applicants.remove(applicant);
+    }
+
+    public void deleteJobPosition(JobPosition jobPosition){
+        jobPositions.remove(jobPosition);
+    }
+
     public void addRecruiter(Recruiter recruiter) {
         if (recruiter != null) {
             if (!recruiters.contains(recruiter)) {
@@ -68,6 +76,26 @@ public class HRSystem {
         } else {
             System.out.println("Invalid applicant");
         }
+    }
+
+    public double getSalaryAvgForOpenPositions(){
+        return jobPositions.stream()
+                .filter(JobPosition::isOpen)
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
+    }
+
+    public double getSalaryAvgForClosedPositions(){
+        return jobPositions.stream()
+                .filter(job -> !job.isOpen())
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
+    }
+
+    public double getSalaryAvgForAllPositions(){
+        return jobPositions.stream()
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
     }
 
     public void generateReports() {
