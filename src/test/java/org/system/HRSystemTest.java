@@ -6,10 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.recruiters.Recruiter;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -147,6 +144,10 @@ class HRSystemTest {
                 line=br.readLine();
             }
             assertEquals(expectedReport.toString(), loadedReport.toString());
+            File reportFile = new File(HRSystem.REPORT_FILE);
+            if(reportFile.exists()){
+                reportFile.delete();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
