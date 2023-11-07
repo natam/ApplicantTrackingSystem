@@ -44,4 +44,37 @@ class JobPositionTest {
         applicant.setExpectedSalary(60000.0);
         assertTrue(jobPosition.isWithinBudget(applicant));
     }
+
+    @Test
+    void givenNullApplicant_addRelevantApplicant() {
+        int applicantsBeforeAction = jobPosition.getRelevantApplicants().size();
+        jobPosition.addRelevantApplicant(null);
+        assertEquals(applicantsBeforeAction, jobPosition.getRelevantApplicants().size());
+    }
+
+    @Test
+    void givenValidApplicant_addRelevantApplicant() {
+        int expectedApplicants = jobPosition.getRelevantApplicants().size() + 1;
+        jobPosition.addRelevantApplicant(applicant);
+        assertEquals(applicant,jobPosition.getRelevantApplicants().get(0));
+        assertEquals(expectedApplicants, jobPosition.getRelevantApplicants().size());
+    }
+
+    @Test
+    void givenInvalidApplicant_addRelevantApplicant() {
+        Applicant applicant2 = new Applicant("Jon", "Berlin", "Berlin", 165000.0, "Reviewed");
+        int expectedApplicants = jobPosition.getRelevantApplicants().size();
+        jobPosition.addRelevantApplicant(applicant2);
+        assertFalse(jobPosition.getRelevantApplicants().contains(applicant2));
+        assertEquals(expectedApplicants, jobPosition.getRelevantApplicants().size());
+    }
+
+    @Test
+    void givenAlreadyAddedApplicant_addRelevantApplicant() {
+        int expectedApplicants = jobPosition.getRelevantApplicants().size() + 1;
+        jobPosition.addRelevantApplicant(applicant);
+        jobPosition.addRelevantApplicant(applicant);
+        assertEquals(expectedApplicants, jobPosition.getRelevantApplicants().size());
+        assertEquals(applicant,jobPosition.getRelevantApplicants().get(0));
+    }
 }

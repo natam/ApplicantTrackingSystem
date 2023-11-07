@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.recruiters.Recruiter;
 
 import java.io.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,14 +15,20 @@ class HRSystemTest {
     HRSystem hrSystem;
     Recruiter recruiter;
     JobPosition jobPosition;
+    JobPosition jobPosition2;
     Applicant applicant;
+    Applicant applicant2;
 
     @BeforeEach
     void init() {
         hrSystem = new HRSystem();
         jobPosition = new JobPosition("QA Automation Engineer", 55000.0, 65000.0, "Berlin", "Tech", "role1");
+        jobPosition2 = new JobPosition("CTO", 120000.0, 180000.0, "Berlin", "Tech", "role2");
         applicant = new Applicant("Natallia", "Berlin", "Berlin", 65000.0, "Open");
         recruiter = new Recruiter("Tom");
+        applicant2 = new Applicant("Jon", "Berlin", "Berlin", 165000.0, "Reviewed");
+        jobPosition.addRelevantApplicant(applicant);
+        jobPosition2.addRelevantApplicant(applicant2);
     }
     @Test
     void givenNullJobPosition_addJobPosition() {
@@ -88,19 +95,30 @@ class HRSystemTest {
 
     @Test
     void getApplicantsCountPerStatus() {
+        hrSystem.addApplicant(applicant);
+        hrSystem.addApplicant(applicant2);
+        Map<String, Long> expectedResult = new HashMap<>();
+        expectedResult.put(applicant.getStatus(), 1L);
+        expectedResult.put(applicant2.getStatus(), 1L);
+        assertEquals(expectedResult, hrSystem.getApplicantsCountPerStatus());
     }
 
     @Test
     void getApplicantsByJobPosition() {
+        hrSystem.addApplicant(applicant);
+        hrSystem.addApplicant(applicant2);
+        hrSystem.addJobPosition(jobPosition);
+        hrSystem.addJobPosition(jobPosition2);
+        Map<String, List<String>> expectedResult = new HashMap<>();
+        expectedResult.put(jobPosition.getTitle(), Collections.singletonList(jobPosition.getRelevantApplicants().get(0).getName()));
+        expectedResult.put(jobPosition2.getTitle(), Collections.singletonList(jobPosition2.getRelevantApplicants().get(0).getName()));
+        assertEquals(expectedResult, hrSystem.getApplicantsByJobPosition());
+
     }
 
     @Test
     void generateReportTest(){
-        JobPosition jobPosition2 = new JobPosition("CTO", 120000.0, 180000.0, "Berlin", "Tech", "role2");
         Recruiter recruiter2 = new Recruiter("Nina");
-        Applicant applicant2 = new Applicant("Jon", "Berlin", "Berlin", 165000.0, "Reviewed");
-        jobPosition.addRelevantApplicant(applicant);
-        jobPosition2.addRelevantApplicant(applicant2);
 
         hrSystem.addApplicant(applicant);
         hrSystem.addApplicant(applicant2);
