@@ -1,9 +1,0 @@
-REPORT
-Number of applicants in the system: 2
-Number of job positions in the system: 2
-Number of applicants per job position: 
-QA Automation Engineer - Natallia
-CTO - Jon
-Number of applicants per status: 
-Reviewed - 1
-Open - 1

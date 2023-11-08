@@ -14,6 +14,9 @@ public class JobPosition {
     private String location;
     private String industry;
     private String role;
+    private List<Applicant> relevantApplicants;
+    private List<Applicant> rejectedApplicants;
+    private List<Applicant> approvedApplicants;
 
     public JobPosition(String title, double offeredSalaryRangeStart, double offeredSalaryRangeEnd, String location, String industry, String role) {
         this.title = title;
@@ -23,6 +26,9 @@ public class JobPosition {
         this.industry = industry;
         this.role = role;
         requiredSkills = new ArrayList<>();
+        relevantApplicants = new ArrayList<>();
+        rejectedApplicants = new ArrayList<>();
+        approvedApplicants = new ArrayList<>();
     }
 
     public String getIndustry() {
@@ -73,6 +79,10 @@ public class JobPosition {
         this.offeredSalaryRangeEnd = offeredSalaryRangeEnd;
     }
 
+    public List<Applicant> getRelevantApplicants() {
+        return relevantApplicants;
+    }
+
     public List<String> getRequiredSkills() {
         return requiredSkills;
     }
@@ -89,13 +99,84 @@ public class JobPosition {
         this.location = location;
     }
 
+    public List<Applicant> getRejectedApplicants() {
+        return rejectedApplicants;
+    }
+
+    public List<Applicant> getApprovedApplicants() {
+        return approvedApplicants;
+    }
+
+    public void approveApplicant(Applicant applicant){
+        if(applicant!=null) {
+            if (!approvedApplicants.contains(applicant)) {
+                if (!rejectedApplicants.contains(applicant)) {
+                    if (relevantApplicants.contains(applicant)) {
+                        relevantApplicants.remove(applicant);
+                        approvedApplicants.add(applicant);
+                    }else {
+                        System.out.println("Applicant doesn't present in relevant list");
+                    }
+                } else {
+                    System.out.println("Applicant was already rejected");
+                }
+            } else {
+                System.out.println("Applicant already approved");
+            }
+        }
+    }
+
+    public void rejectApplicant(Applicant applicant){
+        if(applicant!=null) {
+            if (!approvedApplicants.contains(applicant)) {
+                if (!rejectedApplicants.contains(applicant)) {
+                    if (relevantApplicants.contains(applicant)) {
+                        relevantApplicants.remove(applicant);
+                        rejectedApplicants.add(applicant);
+                    }else {
+                        System.out.println("Applicant doesn't present in relevant list");
+                    }
+                } else {
+                    System.out.println("Applicant was already rejected");
+                }
+            } else {
+                System.out.println("Applicant already approved");
+            }
+        }
+    }
+
+    public void approveOneAndRejectAllOthers(Applicant applicant){
+        approveApplicant(applicant);
+        for(Applicant applicantToReject: relevantApplicants){
+            rejectApplicant(applicantToReject);
+        }
+    }
+
     public void addRequiredSkill(String skill){
-        if(!requiredSkills.contains(skill)){
+        if(!requiredSkills.contains(skill) && !skill.isEmpty()){
             requiredSkills.add(skill);
         }else System.out.println("Skill already presents");
     }
 
+    public void addRelevantApplicant(Applicant applicant){
+        if(applicant!=null){
+            if(!relevantApplicants.contains(applicant) && !rejectedApplicants.contains(applicant) && !approvedApplicants.contains(applicant)){
+                if (isWithinBudget(applicant) && getLocation().equals(applicant.getPreferredLocation())) {
+                    relevantApplicants.add(applicant);
+                }
+            }else {
+                System.out.println("Job position already contains this applicant");
+            }
+        }else {
+            System.out.println("Invalid applicant");
+        }
+    }
+
     public boolean isWithinBudget(Applicant applicant){
         return (offeredSalaryRangeStart<=applicant.getExpectedSalary() && applicant.getExpectedSalary()<=offeredSalaryRangeEnd);
+    }
+
+    public boolean isOpen(){
+        return approvedApplicants.isEmpty();
     }
 }

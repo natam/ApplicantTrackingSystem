@@ -7,6 +7,7 @@ import org.recruiters.Recruiter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class HRSystem {
@@ -45,6 +46,14 @@ public class HRSystem {
         }
     }
 
+    public void deleteApplicant(Applicant applicant){
+        applicants.remove(applicant);
+    }
+
+    public void deleteJobPosition(JobPosition jobPosition){
+        jobPositions.remove(jobPosition);
+    }
+
     public void addRecruiter(Recruiter recruiter) {
         if (recruiter != null) {
             if (!recruiters.contains(recruiter)) {
@@ -69,6 +78,26 @@ public class HRSystem {
         }
     }
 
+    public double getSalaryAvgForOpenPositions(){
+        return jobPositions.stream()
+                .filter(JobPosition::isOpen)
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
+    }
+
+    public double getSalaryAvgForClosedPositions(){
+        return jobPositions.stream()
+                .filter(job -> !job.isOpen())
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
+    }
+
+    public double getSalaryAvgForAllPositions(){
+        return jobPositions.stream()
+                .mapToDouble(jobPosition -> (jobPosition.getOfferedSalaryRangeStart() + jobPosition.getOfferedSalaryRangeEnd())/2)
+                .average().getAsDouble();
+    }
+
     public void generateReports() {
         StringBuilder report = new StringBuilder();
         report.append("REPORT").append(System.lineSeparator())
@@ -81,9 +110,9 @@ public class HRSystem {
                 .append(System.lineSeparator());
         getApplicantsByJobPosition()
                 .forEach((key, value) ->
-                        report.append(key.getTitle())
+                        report.append(key)
                                 .append(" - ")
-                                .append(String.join(", ", value.stream().map(Applicant::getName).toList()))
+                                .append(String.join(", ", value))
                                 .append(System.lineSeparator()));
         report.append("Number of applicants per status: ")
                 .append(System.lineSeparator());
@@ -106,19 +135,14 @@ public class HRSystem {
         return applicants.stream().collect(Collectors.groupingBy(Applicant::getStatus, Collectors.counting()));
     }
 
-    public Map<JobPosition, List<Applicant>> getApplicantsByJobPosition() {
-        Map<JobPosition, List<Applicant>> applicantsByJobPosition = new HashMap<>();
-        for (JobPosition job : jobPositions) {
-            for (Applicant applicant : applicants) {
-                if (job.isWithinBudget(applicant) && job.getLocation().equals(applicant.getPreferredLocation())) {
-                    if (applicantsByJobPosition.containsKey(job)) {
-                        applicantsByJobPosition.get(job).add(applicant);
-                    } else {
-                        applicantsByJobPosition.put(job, Collections.singletonList(applicant));
-                    }
-                }
-            }
-        }
-        return applicantsByJobPosition;
+    public Map<String, List<String>> getApplicantsByJobPosition() {
+        return jobPositions.stream()
+                .collect(Collectors.toMap(
+                        JobPosition::getTitle,
+                        jobPosition -> jobPosition
+                                .getRelevantApplicants()
+                                .stream()
+                                .map(Applicant::getName)
+                                .toList()));
     }
 }
